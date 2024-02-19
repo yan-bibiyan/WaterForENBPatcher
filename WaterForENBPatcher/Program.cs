@@ -3,14 +3,7 @@ using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Plugins.Records;
-using System.Xml.Linq;
 using WaterForENBPatcher.Utilities;
-using WaterForENBPatcher.Settings;
-using System.Text;
-using Mutagen.Bethesda.Strings;
-using System.Reactive.Concurrency;
-using Mutagen.Bethesda.Plugins.Order;
 using System.Reactive.Linq;
 
 namespace WaterForENBPatcher
@@ -48,8 +41,12 @@ namespace WaterForENBPatcher
             System.Console.WriteLine("Running version: 0.1");
             ISkyrimModGetter? WENB = state.LoadOrder.getModByFileName("Water for ENB.esm");
             ISkyrimModGetter? WENB1 = state.LoadOrder.getModByFileName(_settings.Value.WaterForEnbModName);
-            if (WENB is not null && WENB1 is not null) {
-                (List<String> modNames1, List<ISkyrimModGetter> childMods1) = state.LoadOrder.getModsFromMasterIncludingMaster("Water for ENB.esm", WENB);
+
+            if (WENB1 is not null) {
+                (List<String> modNames1, List<ISkyrimModGetter> childMods1) = WENB is not null? 
+                    state.LoadOrder.getModsFromMasterIncludingMaster("Water for ENB.esm", WENB) :
+                    (new List<string>(), new List<ISkyrimModGetter>());
+
                 (List<String> modNames2, List<ISkyrimModGetter> childMods2) = state.LoadOrder.getModsFromMasterIncludingMaster(_settings.Value.WaterForEnbModName, WENB1);
                 //will have duplicates, but Union() doesn't work properly on lists of ISkyrimModGetter
                 List<String> modNames = modNames1.Concat(modNames2).ToList();

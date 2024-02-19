@@ -1,18 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Mutagen.Bethesda;
-using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
-using System.Text;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Order;
 using Mutagen.Bethesda.Plugins.Records;
 
-namespace WaterForENBPatcher.Utilities {
+namespace WaterForENBPatcher.Utilities
+{
     public static class LoadOrderUtilities {
-        public static ISkyrimModGetter? getModByFileName(this ILoadOrder<IModListing<ISkyrimModGetter>> LoadOrder, string name) {
-            return LoadOrder[LoadOrder.Keys.Where(x => ((string)x.FileName).ToLower() == name.ToLower()).ToList().First()].Mod;
+        public static ISkyrimModGetter? getModByFileName(this ILoadOrder<IModListing<ISkyrimModGetter>> LoadOrder, string name) 
+        {
+            ModKey modKey = LoadOrder.Keys.Where(x => ((string)x.FileName).ToLower() == name.ToLower()).ToList().FirstOrDefault();
+            if (modKey == ModKey.Null) { Console.WriteLine($"{name} not found."); return null; }
+            return LoadOrder[modKey].Mod;
         }
         public static (List<String>, List<ISkyrimModGetter>) getModsFromMasterIncludingMaster(this ILoadOrder<IModListing<ISkyrimModGetter>> LoadOrder, String masterName, ISkyrimModGetter master) {
             List<ISkyrimModGetter> modsToPatch = new();
